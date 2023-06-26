@@ -9,7 +9,7 @@ cd ..
 pwd
 
 echo "Remove DB"
-rm db.sqlite3
+rm -f db.sqlite3
 
 echo "Remove media files"
 rm -rf media/uploads
