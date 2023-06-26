@@ -74,6 +74,6 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
             slug=slug,
         )
         post.hits += 1
-        post.save()
+        post.save(update_fields=["hits", "updated_at"])
         serializer = PostRetrieveSerializer(post, context={"request": request})
         return Response(serializer.data)
