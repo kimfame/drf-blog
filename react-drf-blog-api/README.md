@@ -1,4 +1,4 @@
-# DRF Blog Backend
+# React DRF Blog Backend
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
@@ -20,7 +20,7 @@ $ cp env.template .env
 
 #### 2. Edit .env file
 
-```bash
+```
 # Environment mode
 # local, dev, prod
 ENV_MODE=local
@@ -61,7 +61,7 @@ $ poetry install
 $ poetry python manage.py migrate
 ```
 
-#### (Option) Create dummy data
+#### (Option) Create dummy data for testing
 
 ```bash
 $ ./scripts/local_data_reset.sh
@@ -82,4 +82,4 @@ $ poetry python manage.py test
 ## License
 
 Licensed under the
-[MIT](https://github.com/kimfame/redhorse/blob/main/LICENSE) License.
+[MIT](https://github.com/kimfame/react-drf-blog/blob/main/react-drf-blog-api/LICENSE) License.
