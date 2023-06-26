@@ -1,7 +1,9 @@
+from django.conf import settings
 from rest_framework.pagination import PageNumberPagination
 
+
 class PostPagination(PageNumberPagination):
-    page_size = 10
+    page_size = settings.POST_PAGE_SIZE
 
     def get_next_link(self):
         if not self.page.has_next():
