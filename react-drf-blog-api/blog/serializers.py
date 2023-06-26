@@ -45,9 +45,8 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
 
     def get_next(self, obj):
         post = (
-            Post.objects.filter(
+            Post.public.filter(
                 pk__gt=obj.pk,
-                is_published=True,
             )
             .order_by("pk")
             .first()
@@ -59,9 +58,8 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
 
     def get_previous(self, obj):
         post = (
-            Post.objects.filter(
+            Post.public.filter(
                 pk__lt=obj.pk,
-                is_published=True,
             )
             .order_by("-pk")
             .first()

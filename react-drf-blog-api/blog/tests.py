@@ -22,18 +22,25 @@ class CategoryTestCase(APITestCase):
 class TagTestCase(APITestCase):
     def setUp(self):
         self.url = reverse("tag-list")
-        TagFactory.create_batch(size=10)
 
     def test_can_get_all_tags(self):
+        tags = TagFactory.create_batch(size=10)
+
+        for _ in range(30):
+            PostFactory.create(
+                tags=random.choices(tags, k=random.randint(1, 3)),
+            )
+
+        public_post_tag_count = Post.public.all().values("tags").distinct().count()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 10)
+        self.assertEqual(len(response.data), public_post_tag_count)
 
 
 class PostTestCase(APITestCase):
     def test_can_get_only_posts_published(self):
         PostFactory.create_batch(size=random.randint(10, 20))
-        post_count = Post.objects.filter(is_published=True).count()
+        post_count = Post.public.all().count()
         url = reverse("post-list")
         response = self.client.get(url)
 
@@ -53,9 +60,8 @@ class PostTestCase(APITestCase):
         ]
 
         post_count = (
-            Post.objects.filter(
+            Post.public.filter(
                 categories__id__in=target_category_id_list,
-                is_published=True,
             )
             .distinct()
             .count()
@@ -79,9 +85,7 @@ class PostTestCase(APITestCase):
         ]
 
         post_count = (
-            Post.objects.filter(tags__id__in=target_tags_id_list, is_published=True)
-            .distinct()
-            .count()
+            Post.public.filter(tags__id__in=target_tags_id_list).distinct().count()
         )
 
         base_url = reverse("post-list")
@@ -105,10 +109,9 @@ class PostTestCase(APITestCase):
         target_category = random.choice(categories).id
         target_tag = random.choice(tags).id
 
-        post_count = Post.objects.filter(
+        post_count = Post.public.filter(
             categories__id=target_category,
             tags__id=target_tag,
-            is_published=True,
         ).count()
 
         base_url = reverse("post-list")

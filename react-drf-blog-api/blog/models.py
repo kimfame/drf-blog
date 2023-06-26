@@ -66,6 +66,16 @@ class Tag(models.Model):
         return self.name
 
 
+class PublicPostManager(models.Manager):
+    def filter(self, *args, **kwargs):
+        if kwargs.get("is_published") == False:
+            return super().get_queryset().filter(*args, **kwargs)
+        return self.get_queryset().filter(*args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=True)
+
+
 class Post(models.Model):
     slug = models.SlugField(max_length=300, unique=True, blank=True, allow_unicode=True)
     author = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -77,6 +87,9 @@ class Post(models.Model):
     hits = models.BigIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
+    public = PublicPostManager()
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)

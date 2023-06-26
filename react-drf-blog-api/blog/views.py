@@ -30,14 +30,16 @@ class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
             return Tag.objects.filter(
                 id__in=Subquery(
-                    Post.objects.filter(categories__id__in=category_id_list)
+                    Post.public.filter(categories__id__in=category_id_list)
                     .prefetch_related("categories")
                     .values("tags")
                     .distinct()
                 )
             ).order_by("name")
 
-        return Tag.objects.all().order_by("name")
+        return Tag.objects.filter(
+            id__in=Subquery(Post.public.all().values("tags").distinct())
+        ).order_by("name")
 
 
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
@@ -56,21 +58,20 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
             if id_list:
                 post_filter_kwargs[f"{field_name}__id__in"] = id_list
 
-        posts = Post.objects
+        posts = Post.public
 
         if len(post_filter_kwargs) > 0:
-            posts = posts.filter(is_published=True, **post_filter_kwargs).distinct()
+            posts = posts.filter(**post_filter_kwargs).distinct()
         else:
-            posts = posts.filter(is_published=True)
+            posts = posts.all()
 
         posts = posts.order_by("-created_at")
         return posts
 
     def retrieve(self, request, slug=None):
         post = get_object_or_404(
-            Post.objects.select_related("author"),
+            Post.public.select_related("author"),
             slug=slug,
-            is_published=True,
         )
         post.hits += 1
         post.save()
