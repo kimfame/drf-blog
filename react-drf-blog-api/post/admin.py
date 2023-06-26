@@ -1,21 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from blog.models import Category, Post, Tag
-
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "slug")
-    list_display_links = ("name",)
-    exclude = ("slug",)
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "slug")
-    list_display_links = ("name",)
-    exclude = ("slug",)
+from .models import Post
 
 
 @admin.register(Post)

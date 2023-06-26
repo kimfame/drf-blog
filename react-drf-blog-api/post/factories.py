@@ -3,12 +3,11 @@ import random
 from django.contrib.auth.models import User
 from factory import fuzzy, LazyAttribute, post_generation, sequence, SubFactory
 from factory.django import DjangoModelFactory
-from faker import Faker
 
+from category.factories import CategoryFactory
 from core.utils import random_html_paragraphs
-from .models import Category, Post, Tag
-
-fake = Faker()
+from tag.factories import TagFactory
+from .models import Post
 
 
 class UserFactory(DjangoModelFactory):
@@ -16,20 +15,6 @@ class UserFactory(DjangoModelFactory):
         model = User
 
     username = sequence(lambda n: f"user_{n+1}")
-
-
-class CategoryFactory(DjangoModelFactory):
-    class Meta:
-        model = Category
-
-    name = sequence(lambda n: f"category_{n+1}")
-
-
-class TagFactory(DjangoModelFactory):
-    class Meta:
-        model = Tag
-
-    name = sequence(lambda n: f"tag_{n+1}")
 
 
 class PostFactory(DjangoModelFactory):

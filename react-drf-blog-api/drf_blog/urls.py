@@ -4,13 +4,15 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from blog import views
+from category.views import CategoryViewSet
+from tag.views import TagViewSet
+from post.views import PostViewSet
 
 
 router = DefaultRouter()
-router.register("categories", views.CategoryViewSet, basename="category")
-router.register("tags", views.TagViewSet, basename="tag")
-router.register("posts", views.PostViewSet, basename="post")
+router.register("categories", CategoryViewSet, basename="category")
+router.register("tags", TagViewSet, basename="tag")
+router.register("posts", PostViewSet, basename="post")
 
 urlpatterns = router.urls
 

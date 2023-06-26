@@ -8,35 +8,6 @@ from .factories import CategoryFactory, PostFactory, TagFactory
 from .models import Post
 
 
-class CategoryTestCase(APITestCase):
-    def setUp(self):
-        self.url = reverse("category-list")
-        CategoryFactory.create_batch(size=10)
-
-    def test_can_get_all_categories(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 10)
-
-
-class TagTestCase(APITestCase):
-    def setUp(self):
-        self.url = reverse("tag-list")
-
-    def test_can_get_all_tags(self):
-        tags = TagFactory.create_batch(size=10)
-
-        for _ in range(30):
-            PostFactory.create(
-                tags=random.choices(tags, k=random.randint(1, 3)),
-            )
-
-        public_post_tag_count = Post.public.all().values("tags").distinct().count()
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), public_post_tag_count)
-
-
 class PostTestCase(APITestCase):
     def test_can_get_only_posts_published(self):
         PostFactory.create_batch(size=random.randint(10, 20))

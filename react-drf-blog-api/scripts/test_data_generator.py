@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 from django.db import OperationalError
 from faker import Faker
 
-from blog.factories import UserFactory, CategoryFactory, TagFactory, PostFactory
+from category.factories import CategoryFactory
+from post.factories import PostFactory, UserFactory
+from tag.factories import TagFactory
 from .test_data import category_list, tag_list
 
-fake = Faker()
 logger = logging.getLogger(__name__)
+fake = Faker()
 
 
 def run():
