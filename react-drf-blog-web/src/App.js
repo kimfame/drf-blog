@@ -8,7 +8,9 @@ import NotFound from './pages/NotFound';
 import PostDetail from './pages/PostDetail';
 
 function App() {
-  RouteChangeTracker();
+  if (process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID) {
+    RouteChangeTracker();
+  }
 
   return (
     <Routes>
