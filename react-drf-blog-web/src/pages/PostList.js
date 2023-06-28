@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React } from 'react';
 
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
@@ -7,30 +7,26 @@ import { Link } from 'react-router-dom';
 import Loading from '../components/Loading';
 import fetcher from '../plugins/react-query';
 
-const PostList = ({ categories, tags }) => {
-  const [pageNum, setPageNum] = useState(1);
+const PostList = ({ categories, tags, pageNum, setPageNum }) => {
   const { data, isLoading } = useQuery(
     `/posts/?page=${pageNum}${categories.length > 0 ? `&categories=${categories.toString()}` : ''}${
       tags.length > 0 ? `&tags=${tags.toString()}` : ''
     }`,
     fetcher,
+    {
+      cacheTime: Infinity,
+    },
   );
 
   const moveNextPage = () => {
     if (data?.next) {
-      setPageNum((prePageNum) => {
-        const newPrePageNum = prePageNum + 1;
-        return newPrePageNum;
-      });
+      setPageNum(pageNum + 1);
     }
   };
 
   const movePreviousPage = () => {
     if (data?.previous) {
-      setPageNum((prePageNum) => {
-        const newPrePageNum = prePageNum - 1;
-        return newPrePageNum;
-      });
+      setPageNum(pageNum - 1);
     }
   };
 
@@ -100,11 +96,15 @@ const PostList = ({ categories, tags }) => {
 PostList.defaultProps = {
   categories: [],
   tags: [],
+  pageNum: 1,
+  setPageNum: () => {},
 };
 
 PostList.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.number),
   tags: PropTypes.arrayOf(PropTypes.number),
+  pageNum: PropTypes.number,
+  setPageNum: PropTypes.func,
 };
 
 export default PostList;

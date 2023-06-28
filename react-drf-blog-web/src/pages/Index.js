@@ -11,7 +11,8 @@ import fetcher from '../plugins/react-query';
 const Index = () => {
   const [categories, setCategories] = useSessionStorage('categories', []);
   const [tags, setTags] = useSessionStorage('tags', []);
-  const [TagSwitch, setTagSwitch] = useState(false);
+  const [TagFetchSwitch, setTagFetchSwitch] = useState(false);
+  const [pageNum, setPageNum] = useSessionStorage('pageNum', 1);
 
   function getSelectedCategories() {
     return categories.filter((category) => category.on === true).map((category) => category.id);
@@ -24,10 +25,12 @@ const Index = () => {
   useQuery('/categories/', fetcher, {
     onSuccess: (data) => {
       setCategories(data.map((category) => ({ ...category, on: false })));
-      setTagSwitch(true);
+      setTagFetchSwitch(true);
+      setPageNum(1);
     },
     enabled: !categories.length,
     staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   useQuery(
@@ -35,14 +38,17 @@ const Index = () => {
     fetcher,
     {
       onSuccess: (data) => {
+        setTagFetchSwitch(false);
         setTags(data.map((tag) => ({ ...tag, on: false })));
       },
-      enabled: TagSwitch,
+      enabled: TagFetchSwitch,
+      cacheTime: Infinity,
     },
   );
 
   const toggleCategory = (id) => {
-    setTagSwitch(true);
+    setTagFetchSwitch(true);
+    setPageNum(1);
     setCategories(
       categories.map((category) =>
         category.id === id ? { ...category, on: !category.on } : category,
@@ -51,7 +57,8 @@ const Index = () => {
   };
 
   const toggleTag = (id) => {
-    setTagSwitch(false);
+    setTagFetchSwitch(false);
+    setPageNum(1);
     setTags(tags.map((tag) => (tag.id === id ? { ...tag, on: !tag.on } : tag)));
   };
 
@@ -83,7 +90,12 @@ const Index = () => {
 
       <div className="container mx-auto flex flex-wrap py-6">
         <section className="w-full md:w-2/3 flex flex-col items-center px-3">
-          <PostList categories={getSelectedCategories()} tags={getSelectedTags()} />
+          <PostList
+            categories={getSelectedCategories()}
+            tags={getSelectedTags()}
+            pageNum={pageNum}
+            setPageNum={setPageNum}
+          />
         </section>
 
         <aside className="w-full md:w-1/3 flex flex-col items-center px-3">

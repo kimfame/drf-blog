@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 const useSessionStorage = (key, initialValue) => {
   const [value, setValue] = useState(initialValue);
+
   useEffect(() => {
     const item = window.sessionStorage.getItem(key);
     if (item) {
